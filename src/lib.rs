@@ -324,6 +324,17 @@ pub async fn connect(
     Ok(client)
 }
 
+pub async fn connect_wallet_unlocker(
+    cert: String,
+    socket: String,
+) -> Result<
+    crate::lnrpc::wallet_unlocker_client::WalletUnlockerClient<MyChannel>,
+    Box<dyn std::error::Error>,
+> {
+    let channel = get_channel(cert, socket).await?;
+    Ok(crate::lnrpc::wallet_unlocker_client::WalletUnlockerClient::new(channel.clone()))
+}
+
 #[derive(Clone)]
 pub struct MyChannel {
     uri: Uri,
