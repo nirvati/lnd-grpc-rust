@@ -43,7 +43,8 @@ fn main() -> std::io::Result<()> {
         .build_client(true)
         .build_server(false)
         .type_attribute(".", "#[derive(serde::Serialize, serde::Deserialize)]")
-        .compile(&proto_paths, &[dir])?;
+        .protoc_arg("--experimental_allow_proto3_optional")
+        .compile_protos(&proto_paths, &[dir])?;
 
     Ok(())
 }
