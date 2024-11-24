@@ -16,7 +16,7 @@ doctest = false
 
 [dependencies]
 tonic = "0.12"
-tonic-openssl = { git = "https://github.com/nirvati/tonic-openssl", rev = "d2861d043467958802b724958babb85ca6af4597" }
+tonic-openssl = { git = "https://github.com/LucioFranco/tonic-openssl", rev = "75579c1cc5f35252285aa0f6f1e1d27dee7b5a95" }
 hyper = { version = "1.0", features = ["http2"] }
 hyper-util = { version = "0.1", features = ["client-legacy"] }
 hyper-openssl = { version = "0.10", features = ["client-legacy"] }
