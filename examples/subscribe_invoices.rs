@@ -48,5 +48,5 @@ fn buffer_as_hex(bytes: Vec<u8>) -> String {
         .map(|b| format!("{:02x}", b))
         .collect::<String>();
 
-    return hex_str;
+    hex_str
 }
