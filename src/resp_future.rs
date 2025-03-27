@@ -5,7 +5,7 @@ use std::fmt;
 use std::future::Future;
 use std::pin::Pin;
 use std::task::{self, Poll};
-use tonic::body::BoxBody;
+use tonic::body::Body;
 
 pub(crate) struct SyncWrapper<T>(T);
 
@@ -83,7 +83,7 @@ pub struct ResponseFuture {
     inner: SyncWrapper<
         Pin<
             Box<
-                dyn Future<Output = Result<Response<BoxBody>, hyper_util::client::legacy::Error>>
+                dyn Future<Output = Result<Response<Body>, hyper_util::client::legacy::Error>>
                     + Send,
             >,
         >,
@@ -93,7 +93,7 @@ pub struct ResponseFuture {
 impl ResponseFuture {
     pub(crate) fn new<F>(value: F) -> Self
     where
-        F: Future<Output = Result<Response<BoxBody>, hyper_util::client::legacy::Error>>
+        F: Future<Output = Result<Response<Body>, hyper_util::client::legacy::Error>>
             + Send
             + 'static,
     {
@@ -110,7 +110,7 @@ impl fmt::Debug for ResponseFuture {
 }
 
 impl Future for ResponseFuture {
-    type Output = Result<Response<BoxBody>, hyper_util::client::legacy::Error>;
+    type Output = Result<Response<Body>, hyper_util::client::legacy::Error>;
 
     fn poll(mut self: Pin<&mut Self>, cx: &mut task::Context<'_>) -> Poll<Self::Output> {
         self.inner.get_mut().as_mut().poll(cx)

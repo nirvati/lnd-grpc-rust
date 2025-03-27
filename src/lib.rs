@@ -12,13 +12,16 @@ use openssl::{
 pub use prost;
 use std::str::FromStr;
 use std::{error::Error, task::Poll};
-use tonic::{body::BoxBody, Status};
-use tonic_openssl::ALPN_H2_WIRE;
+use tonic::{body::Body, Status};
 use tower::Service;
 
 mod resp_future;
 use http_body_util::BodyExt;
 use resp_future::ResponseFuture;
+
+/// A const that contains the on the wire `h2` alpn
+/// value that can be passed directly to OpenSSL.
+pub const ALPN_H2_WIRE: &[u8] = b"\x02h2";
 
 pub mod autopilotrpc {
     tonic::include_proto!("autopilotrpc");
@@ -343,8 +346,8 @@ pub struct MyChannel {
 
 #[derive(Clone)]
 enum MyClient {
-    ClearText(Client<HttpConnector, BoxBody>),
-    Tls(Client<HttpsConnector<HttpConnector>, BoxBody>),
+    ClearText(Client<HttpConnector, Body>),
+    Tls(Client<HttpsConnector<HttpConnector>, Body>),
 }
 
 impl MyChannel {
@@ -379,8 +382,8 @@ impl MyChannel {
     }
 }
 
-impl Service<Request<BoxBody>> for MyChannel {
-    type Response = Response<BoxBody>;
+impl Service<Request<tonic::body::Body>> for MyChannel {
+    type Response = Response<Body>;
     type Error = hyper_util::client::legacy::Error;
     type Future = ResponseFuture;
 
@@ -388,7 +391,7 @@ impl Service<Request<BoxBody>> for MyChannel {
         Ok(()).into()
     }
 
-    fn call(&mut self, mut req: Request<BoxBody>) -> Self::Future {
+    fn call(&mut self, mut req: Request<Body>) -> Self::Future {
         let uri = Uri::builder()
             .scheme(self.uri.scheme().unwrap().clone())
             .authority(self.uri.authority().unwrap().clone())
@@ -402,7 +405,7 @@ impl Service<Request<BoxBody>> for MyChannel {
         };
         ResponseFuture::new(response_future.map(|result| {
             result.map(|resp| {
-                resp.map(|body| BoxBody::new(body.map_err(|err| Status::internal(err.to_string()))))
+                resp.map(|body| Body::new(body.map_err(|err| Status::internal(err.to_string()))))
             })
         }))
     }
