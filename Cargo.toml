@@ -15,8 +15,8 @@ license = "MIT"
 doctest = false
 
 [dependencies]
-tonic = "0.13"
-#tonic-tls = { git = "https://github.com/youyuanwu/tonic-tls.git", rev = "4cddb8a99eb11390d7bcac1e68776a25263f8e9a", default-features = false, features = ["openssl"]}
+tonic = "0.14.1"
+tonic-prost = "0.14.1"
 hyper = { version = "1.0", features = ["http2"] }
 hyper-util = { version = "0.1", features = ["client-legacy"] }
 hyper-openssl = { version = "0.10", features = ["client-legacy"] }
@@ -26,10 +26,10 @@ openssl = "0.10.66"
 tower = "0.5.0"
 pretty_env_logger = "0.5.0"
 hex = "0.4.3"
-prost = { version = "0.13", features = ["prost-derive"] }
+prost = "0.14.1"
 serde = { version = "1.0", features = ["derive"] }
 futures-util = "0.3.31"
 http-body-util = "0.1.2"
 
 [build-dependencies]
-tonic-build = "0.13"
+tonic-prost-build = "0.14"

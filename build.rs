@@ -7,8 +7,11 @@ fn main() -> std::io::Result<()> {
             let mut lnd_rpc_dir = PathBuf::from(lnd_repo_path);
             lnd_rpc_dir.push("lnrpc");
             lnd_rpc_dir
+                .to_str()
+                .expect("LND_REPO_DIR must be a valid UTF-8 path")
+                .to_string()
         }
-        None => PathBuf::from("vendor"),
+        None => "vendor".to_string(),
     };
 
     let protos = vec![
@@ -40,7 +43,7 @@ fn main() -> std::io::Result<()> {
         })
         .collect();
 
-    tonic_build::configure()
+    tonic_prost_build::configure()
         .build_client(true)
         .build_server(false)
         .type_attribute(".", "#[derive(serde::Serialize, serde::Deserialize)]")
